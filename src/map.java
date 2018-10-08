@@ -2,31 +2,40 @@
 public class map {
 	public int rows, columns;
 	public int jonsnowR, jonsnowC;
+	public int jonswords;
+	public int ww;
 	public block[][] grid;
 	
 	public map() {
-		this.rows = (int)(4 + (Math.random()*96));
-		this.columns = (int)(4 + (Math.random()*96));
+		this.rows = (int)(4 + (Math.random()*6));
+		this.columns = (int)(4 + (Math.random()*6));
 		this.grid = new block[this.rows][this.columns];
+		populateGrid();
 	}
 	
-	private void populateGrid() {
+	void populateGrid() {
+		this.jonswords = (int)(1 + Math.random()*10);
 		this.grid = generateEmptySpaces(
-				generateWhitewalkers(
+				generateObstacles(
+					generateWhitewalkers(
 						generateDragonstone(
-								generateJonSnow(grid)
-								)
+							generateJonSnow(grid)
+							)
 						)
+					)
 				);
 	}
 	
 	//Generates Jon Snow block in bottom right corner
-	public static block[][] generateJonSnow(block[][] grid){
+	public block[][] generateJonSnow(block[][] grid){
 		grid[grid.length-1][grid[0].length-1] = new block("jonsnow");
+		jonsnowC = grid.length-1;
+		jonsnowR = grid[0].length-1;
 		return grid;
 	}
 	
-	public static block[][] generateDragonstone(block[][] grid){
+	//Generates the dragonstone in a random place on the grid
+	public block[][] generateDragonstone(block[][] grid){
 		int row = (int)(grid.length*Math.random()),
 			column = (int)(grid[0].length*Math.random());
 		if(!isAvailable(grid, row, column))
@@ -37,8 +46,10 @@ public class map {
 		}
 	}
 	
-	public static block[][] generateWhitewalkers(block[][] grid){
-		int num = (int)(Math.random() * (grid.length*grid[0].length));
+	//Generates a random number of whitewalkers (less than a third of the grid)
+	public block[][] generateWhitewalkers(block[][] grid){
+		int num = (int)(Math.random() * (grid.length*grid[0].length)/3);
+		this.ww = num;
 		for (int i = 0; i < num; i++) {
 			int row = (int)(Math.random() * grid.length),
 				column = (int)(Math.random() * grid[0].length);
@@ -50,8 +61,24 @@ public class map {
 		}
 		return grid;
 	}
+
+	//Genrates a random number of obstacles (less than a quarter of the grid)
+	public block[][] generateObstacles(block[][] grid){
+		int num = (int)(Math.random() * (grid.length*grid[0].length)/3);
+		for (int i = 0; i < num; i++) {
+			int row = (int)(Math.random() * grid.length),
+				column = (int)(Math.random() * grid[0].length);
+			while(!isAvailable(grid, row, column)) {
+				row = (int)(Math.random() * grid.length);
+				column = (int)(Math.random() * grid[0].length);
+			}
+			grid[row][column] = new block("obstacle");
+		}
+		return grid;
+	}
 	
-	public static block[][] generateEmptySpaces(block[][] grid){
+	//Fills the grid with empty blocks
+	public block[][] generateEmptySpaces(block[][] grid){
 		for(int i = 0; i < grid.length; i++) {
 			for (int j = 0; j < grid[i].length; j++) {
 				if(isAvailable(grid, i, j))
@@ -67,9 +94,7 @@ public class map {
 		return grid[row][column] == null || grid[row][column].isEmpty();
 	}
 
-	
-	
-	
+	//String representation of the map
 	public String toString() {
 		String str = "";
 		for (int i = 0; i < this.grid.length; i++) {
@@ -80,11 +105,6 @@ public class map {
 		}
 		return str;
 	}
-	
-	public static void main(String[] args) {
-		map map = new map();
-		map.populateGrid();
-		System.out.println(map);
-	}
+
 
 }

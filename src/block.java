@@ -1,11 +1,12 @@
 
 public class block {
-	public boolean jonsnow, dragonstone, whitewalker, empty = false;
+	public boolean jonsnow, dragonstone, whitewalker, obstacle, empty = false;
 	public block(String type) {
 		switch(type) {
 			case "jonsnow": jonsnow = true; break;
 			case "dragonstone": dragonstone = true; break;
 			case "whitewalker": whitewalker = true; break;
+			case "obstacle": obstacle = true; break;
 			case "empty": empty = true; break;
 		}
 	}
@@ -15,7 +16,7 @@ public class block {
 	}
 	
 	public String toString() {
-		String type = (jonsnow) ? "JS" : (dragonstone) ? "DS" : (whitewalker) ? "WW" : "  ";
+		String type = (jonsnow) ? "JS" : (dragonstone) ? "DS" : (whitewalker) ? "WW" : (obstacle) ? "OB" : "  ";
 		return "[" + type + "]";
 	}
 }
