@@ -3,6 +3,7 @@ public class map {
 	public int rows, columns;
 	public int jonsnowR, jonsnowC;
 	public int jonswords;
+	public int cost;
 	public int ww;
 	public block[][] grid;
 	
@@ -10,6 +11,7 @@ public class map {
 		this.rows = (int)(4 + (Math.random()*6));
 		this.columns = (int)(4 + (Math.random()*6));
 		this.grid = new block[this.rows][this.columns];
+		this.cost= 0;
 		populateGrid();
 	}
 	
@@ -29,8 +31,8 @@ public class map {
 	//Generates Jon Snow block in bottom right corner
 	public block[][] generateJonSnow(block[][] grid){
 		grid[grid.length-1][grid[0].length-1] = new block("jonsnow");
-		jonsnowC = grid.length-1;
-		jonsnowR = grid[0].length-1;
+		jonsnowR = grid.length-1;
+		jonsnowC = grid[0].length-1;
 		return grid;
 	}
 	
@@ -88,6 +90,43 @@ public class map {
 		return grid;
 	}
 	
+	public map moveJonSnow(String motion) {
+		switch(motion) {
+		case "UP":{
+			if(jonsnowR>0 && isAvailable(grid, jonsnowR-1, jonsnowC)) {
+				jonsnowR--;
+				grid[jonsnowR][jonsnowC] = new block("jonsnow");
+				grid[jonsnowR+1][jonsnowC] = new block("empty");
+			}
+		};break;
+		case "DOWN":{
+			if(jonsnowR<grid.length-1 && isAvailable(grid, jonsnowR+1, jonsnowC)) {
+				jonsnowR++;
+				grid[jonsnowR][jonsnowC] = new block("jonsnow");
+				grid[jonsnowR-1][jonsnowC] = new block("empty");
+			
+		};break;
+		}
+		case "LEFT":{
+			if(jonsnowC>0 && isAvailable(grid, jonsnowR, jonsnowC-1)) {
+				jonsnowC--;
+				grid[jonsnowR][jonsnowC] = new block("jonsnow");
+				grid[jonsnowR][jonsnowC+1] = new block("empty");
+			
+		}
+			
+		};break;
+		case "RIGHT":{
+			if(jonsnowC<grid[0].length-1 && isAvailable(grid, jonsnowR, jonsnowC+1)) {
+				jonsnowC++;
+				grid[jonsnowR][jonsnowC] = new block("jonsnow");
+				grid[jonsnowR][jonsnowC-1] = new block("empty");
+			
+		}
+		};break;
+		}
+		return this;
+	}
 	
 	//Function to determine if block is not empty nor undefined
 	public static boolean isAvailable(block[][] grid, int row, int column) {
