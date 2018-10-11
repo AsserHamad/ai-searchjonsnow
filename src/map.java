@@ -2,7 +2,9 @@
 public class map {
 	public int rows, columns;
 	public int jonsnowR, jonsnowC;
+	public int dragonR, dragonC;
 	public int jonswords;
+	public int maxswords;
 	public int cost;
 	public int ww;
 	public block[][] grid;
@@ -16,7 +18,8 @@ public class map {
 	}
 	
 	void populateGrid() {
-		this.jonswords = (int)(1 + Math.random()*10);
+		this.jonswords = 0;
+		this.maxswords = (int)(1 + Math.random()*10);
 		this.grid = generateEmptySpaces(
 				generateObstacles(
 					generateWhitewalkers(
@@ -40,6 +43,8 @@ public class map {
 	public block[][] generateDragonstone(block[][] grid){
 		int row = (int)(grid.length*Math.random()),
 			column = (int)(grid[0].length*Math.random());
+		dragonR = row; dragonC = column;
+		
 		if(!isAvailable(grid, row, column))
 			return generateDragonstone(grid);
 		else {
@@ -92,14 +97,14 @@ public class map {
 	
 	public map moveJonSnow(String motion) {
 		switch(motion) {
-		case "UP":{
+		case "F":{
 			if(jonsnowR>0 && isAvailable(grid, jonsnowR-1, jonsnowC)) {
 				jonsnowR--;
 				grid[jonsnowR][jonsnowC] = new block("jonsnow");
 				grid[jonsnowR+1][jonsnowC] = new block("empty");
 			}
 		};break;
-		case "DOWN":{
+		case "B":{
 			if(jonsnowR<grid.length-1 && isAvailable(grid, jonsnowR+1, jonsnowC)) {
 				jonsnowR++;
 				grid[jonsnowR][jonsnowC] = new block("jonsnow");
@@ -107,7 +112,7 @@ public class map {
 			
 		};break;
 		}
-		case "LEFT":{
+		case "L":{
 			if(jonsnowC>0 && isAvailable(grid, jonsnowR, jonsnowC-1)) {
 				jonsnowC--;
 				grid[jonsnowR][jonsnowC] = new block("jonsnow");
@@ -116,7 +121,7 @@ public class map {
 		}
 			
 		};break;
-		case "RIGHT":{
+		case "R":{
 			if(jonsnowC<grid[0].length-1 && isAvailable(grid, jonsnowR, jonsnowC+1)) {
 				jonsnowC++;
 				grid[jonsnowR][jonsnowC] = new block("jonsnow");
@@ -126,6 +131,41 @@ public class map {
 		};break;
 		}
 		return this;
+	}
+	
+	public void attack() {
+		if(this.jonswords >0) {
+			this.jonswords--;
+			for(int i=0; i < 4; i++) {
+				try {
+					switch(i) {
+					case 0:{
+						if(grid[jonsnowR][jonsnowC+1].whitewalker) ww--;
+						grid[jonsnowR][jonsnowC+1] = new block("empty");
+					}break;
+					case 1:{
+						if(grid[jonsnowR][jonsnowC-1].whitewalker) ww--;
+						grid[jonsnowR][jonsnowC-1] = new block("empty");
+					}break;
+					case 2:{
+						if(grid[jonsnowR+1][jonsnowC].whitewalker) ww--;
+						grid[jonsnowR+1][jonsnowC] = new block("empty");
+					}break;
+					case 3:{
+						if(grid[jonsnowR-1][jonsnowC].whitewalker) ww--;
+						grid[jonsnowR-1][jonsnowC] = new block("empty");
+					}break;
+
+					}
+				} catch(IndexOutOfBoundsException e) {}
+			}
+		}
+	}
+	
+	public void refill() {
+		if(((jonsnowR == dragonR-1 || jonsnowR == dragonR+1) && jonsnowC == dragonC) || ((jonsnowC == dragonC-1 || jonsnowC == dragonC+1) && jonsnowR == dragonR)) {
+			this.jonswords = this.maxswords;
+		}
 	}
 	
 	//Function to determine if block is not empty nor undefined
