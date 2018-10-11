@@ -8,8 +8,8 @@ public class map {
 	public block[][] grid;
 	
 	public map() {
-		this.rows = (int)(4 + (Math.random()*6));
-		this.columns = (int)(4 + (Math.random()*6));
+		this.rows = (int)(3 + (Math.random()*0));
+		this.columns = (int)(3 + (Math.random()*0));
 		this.grid = new block[this.rows][this.columns];
 		this.cost= 0;
 		populateGrid();
