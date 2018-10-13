@@ -1,13 +1,12 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class Main {
 	
 	public static action[] actions;
 	private static ArrayList<state> previousStates;
+	public static String strategy = "DFS";
 	
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
 		map map = new map();
 		actions = action.populateActions();
@@ -22,7 +21,7 @@ public class Main {
 		
 		System.out.println(root+"\n");
 		ArrayList<node> list= new ArrayList<node>();
-		System.out.println(generateDFSNodes(root, map, list));
+		System.out.println(generateNodes(root, map, list, strategy));
 		
 	}
 	
@@ -41,7 +40,7 @@ public class Main {
 		map.refill();
 	}
 	
-	public static ArrayList<node> generateDFSNodes(node node, map map, ArrayList<node> list){
+	public static ArrayList<node> generateNodes(node node, map map, ArrayList<node> list, String strategy){
 		int count = 0;
 		for(action action: actions) {
 			switch(action.operator) {
@@ -50,7 +49,7 @@ public class Main {
 					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
 					if(!previousStates.contains(_state)) {
 						node _node = new node(_state, "F", node.depth+1, node.cost + 1, node.id);
-						list.add(count, _node);
+						list = addToList(strategy, count, list, _node);
 						count++;
 					}
 				}
@@ -60,7 +59,7 @@ public class Main {
 					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
 					if(!previousStates.contains(_state)) {
 						node _node = new node(_state, "B", node.depth+1, node.cost + 1, node.id);
-						list.add(count, _node);
+						list = addToList(strategy, count, list, _node);
 						count++;
 					}
 				}
@@ -70,7 +69,7 @@ public class Main {
 					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
 					if(!previousStates.contains(_state)) {
 						node _node = new node(_state, "L", node.depth+1, node.cost + 1, node.id);
-						list.add(count, _node);
+						list = addToList(strategy, count, list, _node);
 						count++;
 					}
 				}
@@ -80,7 +79,7 @@ public class Main {
 					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
 					if(!previousStates.contains(_state)) {
 						node _node = new node(_state, "R", node.depth+1, node.cost + 1, node.id);
-						list.add(count, _node);
+						list = addToList(strategy, count, list, _node);
 						count++;
 					}
 				}
@@ -90,7 +89,7 @@ public class Main {
 					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
 					if(!previousStates.contains(_state)) {
 						node _node = new node(_state, "ATTACK", node.depth+1, node.cost + 3, node.id);
-						list.add(count, _node);
+						list = addToList(strategy, count, list, _node);
 						count++;
 					}
 				}
@@ -100,7 +99,7 @@ public class Main {
 					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
 					if(!previousStates.contains(_state)) {
 						node _node = new node(_state, "REFILL", node.depth+1, node.cost + 10, node.id);
-						list.add(count, _node);
+						list = addToList(strategy, count, list, _node);
 						count++;
 					}
 				}
@@ -110,6 +109,18 @@ public class Main {
 		return list;
 	}
 	
+	//Adding the nodes to the list (tree) in the appropriate order
+	public static ArrayList<node> addToList(String strategy, int count, ArrayList<node> list, node node){
+		switch(strategy) {
+			case "DFS":{
+				list.add(count, node);
+			}
+			break;
+		}
+		return list;
+	}
+	
+	//Helper function to check if goal state
 	public static boolean didIWin(map map, node node) {
 		return map.ww == 0;
 	}

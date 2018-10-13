@@ -1,5 +1,5 @@
 
-public class state{
+public class state {
 	public int whitewalkers;
 	public int daggers;
 	public int x;
