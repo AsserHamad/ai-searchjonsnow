@@ -1,5 +1,6 @@
 
-public class block {
+public class block implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
 	public boolean jonsnow, dragonstone, whitewalker, obstacle, empty = false;
 	public block(String type) {
 		switch(type) {

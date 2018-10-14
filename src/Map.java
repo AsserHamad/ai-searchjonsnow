@@ -1,5 +1,6 @@
 
-public class Map implements Cloneable{
+public class Map implements java.io.Serializable{
+	private static final long serialVersionUID = 1L;
 	public int rows, columns;
 	public int jonsnowR, jonsnowC;
 	public int dragonR, dragonC;
@@ -194,12 +195,6 @@ public class Map implements Cloneable{
 		if(((jonsnowR == dragonR-1 || jonsnowR == dragonR+1) && jonsnowC == dragonC) || ((jonsnowC == dragonC-1 || jonsnowC == dragonC+1) && jonsnowR == dragonR)) {
 			this.jonswords = this.maxswords;
 		}
-	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		Map cloned = (Map)super.clone();
-		return cloned;
 	}
 	
 	//Function to determine if block is not empty nor undefined

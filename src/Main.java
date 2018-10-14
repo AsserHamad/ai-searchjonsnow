@@ -1,4 +1,8 @@
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class Main {
@@ -7,7 +11,7 @@ public class Main {
 	private static ArrayList<state> previousStates;
 	public static String strategy = "DFS";
 	
-	public static void main(String[] args) throws IOException, CloneNotSupportedException {
+	public static void main(String[] args) throws IOException, CloneNotSupportedException, ClassNotFoundException {
 		Map map = new Map();
 		actions = action.populateActions();
 		previousStates = new ArrayList<state>();
@@ -16,10 +20,7 @@ public class Main {
 		//As to include the root in the states
 		previousStates.add(initialstate);
 		node root = new node(initialstate, "", 0, 0, -1);
-		
-		System.out.println(map);
-		
-		System.out.println(root+"\n");
+
 		ArrayList<node> list= new ArrayList<node>();
 		list.add(root);
 		System.out.println(generateNodes(list, strategy));
@@ -41,41 +42,32 @@ public class Main {
 		map.refill();
 	}
 	
-	public static ArrayList<node> generateNodes(ArrayList<node> list, String strategy) throws CloneNotSupportedException{
+	public static ArrayList<node> generateNodes(ArrayList<node> list, String strategy) throws CloneNotSupportedException, ClassNotFoundException, IOException{
 		if(list.isEmpty())
 			return null;
 		
-		int count = 0;
 		final node node = list.get(0);
+		System.out.println(node.state.map);
 		list.remove(0);
+		int count = 0;
 		System.out.println("///////////NEW NODE/////////////");
 		System.out.println(node);
-		System.out.println("-----------LIST AFTER REMOVING NODE----------");
-		System.out.println(list);
 		for(action action: actions) {
 			switch(action.operator) {
 				case "F":{
-					System.out.println("OLD MAP WAS ::::");System.out.println(node.state.map);
-					Map map = (Map)node.state.map.clone();
+					Map map = (Map)clone(node.state.map);
 					map.moveJonSnow("F");
-					System.out.println("NEW MAP IS ::::");System.out.println(map);
-					System.out.println("NEW OLD MAP THO IS :::::");System.out.println(node.state.map);
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
-						System.out.println("F eligible woohoo!");
 						previousStates.add(_state);
 						node _node = new node(_state, "F", node.depth+1, node.cost + 1, node.id);
 						list = addToList(strategy, count, list, _node);
 						count++;
-					} else {
-						System.out.println("Previous state does contain this state!");
-						System.out.println("STATE:"); System.out.println(_state);
-						System.out.println("PREVIOUS STATES:"); System.out.println(previousStates);
 					}
 				}
 					break;
 				case "B":{
-					Map map = node.state.map;
+					Map map = (Map)clone(node.state.map);
 					move(map, "B");
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -87,7 +79,7 @@ public class Main {
 				}
 					break;
 				case "L":{
-					Map map = node.state.map;
+					Map map = (Map)clone(node.state.map);
 					move(map, "L");
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -99,7 +91,7 @@ public class Main {
 				}
 					break;
 				case "R":{
-					Map map = node.state.map;
+					Map map = (Map)clone(node.state.map);
 					move(map, "R");
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -111,7 +103,7 @@ public class Main {
 				}
 					break;
 				case "ATTACK":{
-					Map map = node.state.map;
+					Map map = (Map)clone(node.state.map);
 					map = attack(node.state.map);
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -123,7 +115,7 @@ public class Main {
 				}
 					break;
 				case "REFILL":{
-					Map map = node.state.map;
+					Map map = (Map)clone(node.state.map);
 					refill(map);
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -137,6 +129,8 @@ public class Main {
 				}
 		}
 		System.out.println("..............................................................");
+		System.out.println("POSSIBLE ACTIONS");
+		System.out.println(list);
 		return generateNodes(list, strategy);
 	}
 	
@@ -149,6 +143,17 @@ public class Main {
 			break;
 		}
 		return list;
+	}
+	
+
+	public static Object clone(Map obj) throws IOException, ClassNotFoundException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(obj);
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		ObjectInputStream ois = new ObjectInputStream(bais);
+		return ois.readObject();
 	}
 	
 	//Helper function to check if goal state
