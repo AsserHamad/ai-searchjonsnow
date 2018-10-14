@@ -8,10 +8,10 @@ public class Main {
 	public static String strategy = "DFS";
 	
 	public static void main(String[] args) throws IOException {
-		map map = new map();
+		Map map = new Map();
 		actions = action.populateActions();
 		previousStates = new ArrayList<state>();
-		state initialstate = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
+		state initialstate = new state(map);
 		
 		//As to include the root in the states
 		previousStates.add(initialstate);
@@ -21,43 +21,65 @@ public class Main {
 		
 		System.out.println(root+"\n");
 		ArrayList<node> list= new ArrayList<node>();
-		System.out.println(generateNodes(root, map, list, strategy));
+		list.add(root);
+		System.out.println(generateNodes(list, strategy));
 		
 	}
 	
 	//COST: 1
-	public static map move(map map, String direction) {
-		return map.moveJonSnow(direction);
+	public static void move(Map map, String direction) {
+		map.moveJonSnow(direction);
 	}
 	
 	//COST: 3
-	public static void attack(map map) {
-		map.attack();
+	public static Map attack(Map map) {
+		return map.attack();
 	}
 	
 	//COST: 10
-	public static void refill(map map) {
+	public static void refill(Map map) {
 		map.refill();
 	}
 	
-	public static ArrayList<node> generateNodes(node node, map map, ArrayList<node> list, String strategy){
+	public static ArrayList<node> generateNodes(ArrayList<node> list, String strategy){
+		if(list.isEmpty())
+			return null;
+		
 		int count = 0;
+		node node = list.get(0);
+		list.remove(0);
+		System.out.println("///////////NEW NODE/////////////");
+		System.out.println(node);
+		System.out.println("-----------LIST AFTER REMOVING NODE----------");
+		System.out.println(list);
 		for(action action: actions) {
 			switch(action.operator) {
 				case "F":{
-					map = move(map, "F");
-					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
+					System.out.println("OLD MAP WAS ::::");System.out.println(node.state.map);
+					Map map = Map.clone(node.state.map);
+					map.moveJonSnow("F");
+					System.out.println("NEW MAP IS ::::");System.out.println(map);
+					System.out.println("NEW OLD MAP THO IS :::::");System.out.println(node.state.map);
+					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
+						System.out.println("F eligible woohoo!");
+						previousStates.add(_state);
 						node _node = new node(_state, "F", node.depth+1, node.cost + 1, node.id);
 						list = addToList(strategy, count, list, _node);
 						count++;
+					} else {
+						System.out.println("Previous state does contain this state!");
+						System.out.println("STATE:"); System.out.println(_state);
+						System.out.println("PREVIOUS STATES:"); System.out.println(previousStates);
 					}
 				}
 					break;
 				case "B":{
-					map = move(map, "B");
-					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
+					Map map = Map.clone(node.state.map);
+					move(map, "B");
+					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
+						previousStates.add(_state);
 						node _node = new node(_state, "B", node.depth+1, node.cost + 1, node.id);
 						list = addToList(strategy, count, list, _node);
 						count++;
@@ -65,9 +87,11 @@ public class Main {
 				}
 					break;
 				case "L":{
-					map = move(map, "L");
-					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
+					Map map = Map.clone(node.state.map);
+					move(map, "L");
+					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
+						previousStates.add(_state);
 						node _node = new node(_state, "L", node.depth+1, node.cost + 1, node.id);
 						list = addToList(strategy, count, list, _node);
 						count++;
@@ -75,9 +99,11 @@ public class Main {
 				}
 					break;
 				case "R":{
-					map = move(map, "R");
-					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
+					Map map = Map.clone(node.state.map);
+					move(map, "R");
+					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
+						previousStates.add(_state);
 						node _node = new node(_state, "R", node.depth+1, node.cost + 1, node.id);
 						list = addToList(strategy, count, list, _node);
 						count++;
@@ -85,9 +111,11 @@ public class Main {
 				}
 					break;
 				case "ATTACK":{
-					attack(map);
-					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
+					Map map = Map.clone(node.state.map);
+					map = attack(node.state.map);
+					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
+						previousStates.add(_state);
 						node _node = new node(_state, "ATTACK", node.depth+1, node.cost + 3, node.id);
 						list = addToList(strategy, count, list, _node);
 						count++;
@@ -95,9 +123,11 @@ public class Main {
 				}
 					break;
 				case "REFILL":{
+					Map map = Map.clone(node.state.map);
 					refill(map);
-					state _state = new state(map.ww, map.jonswords, map.jonsnowC, map.jonsnowR);
+					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
+						previousStates.add(_state);
 						node _node = new node(_state, "REFILL", node.depth+1, node.cost + 10, node.id);
 						list = addToList(strategy, count, list, _node);
 						count++;
@@ -106,7 +136,8 @@ public class Main {
 					break;
 				}
 		}
-		return list;
+		System.out.println("..............................................................");
+		return generateNodes(list, strategy);
 	}
 	
 	//Adding the nodes to the list (tree) in the appropriate order
@@ -121,7 +152,7 @@ public class Main {
 	}
 	
 	//Helper function to check if goal state
-	public static boolean didIWin(map map, node node) {
+	public static boolean didIWin(Map map, node node) {
 		return map.ww == 0;
 	}
 }

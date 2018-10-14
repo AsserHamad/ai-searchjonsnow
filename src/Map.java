@@ -1,5 +1,5 @@
 
-public class map {
+public class Map {
 	public int rows, columns;
 	public int jonsnowR, jonsnowC;
 	public int dragonR, dragonC;
@@ -9,7 +9,7 @@ public class map {
 	public int ww;
 	public block[][] grid;
 	
-	public map() {
+	public Map() {
 		this.rows = (int)(3 + (Math.random()*0));
 		this.columns = (int)(3 + (Math.random()*0));
 		this.grid = new block[this.rows][this.columns];
@@ -95,77 +95,108 @@ public class map {
 		return grid;
 	}
 	
-	public map moveJonSnow(String motion) {
+	public void moveJonSnow(String motion) {
 		switch(motion) {
 		case "F":{
 			if(jonsnowR>0 && isAvailable(grid, jonsnowR-1, jonsnowC)) {
-				jonsnowR--;
-				grid[jonsnowR][jonsnowC] = new block("jonsnow");
-				grid[jonsnowR+1][jonsnowC] = new block("empty");
+				this.jonsnowR--;
+				this.grid[jonsnowR][jonsnowC] = new block("jonsnow");
+				this.grid[jonsnowR+1][jonsnowC] = new block("empty");
 			}
 		};break;
 		case "B":{
 			if(jonsnowR<grid.length-1 && isAvailable(grid, jonsnowR+1, jonsnowC)) {
-				jonsnowR++;
-				grid[jonsnowR][jonsnowC] = new block("jonsnow");
-				grid[jonsnowR-1][jonsnowC] = new block("empty");
+				this.jonsnowR++;
+				this.grid[jonsnowR][jonsnowC] = new block("jonsnow");
+				this.grid[jonsnowR-1][jonsnowC] = new block("empty");
 			
 		};break;
 		}
 		case "L":{
 			if(jonsnowC>0 && isAvailable(grid, jonsnowR, jonsnowC-1)) {
-				jonsnowC--;
-				grid[jonsnowR][jonsnowC] = new block("jonsnow");
-				grid[jonsnowR][jonsnowC+1] = new block("empty");
+				this.jonsnowC--;
+				this.grid[jonsnowR][jonsnowC] = new block("jonsnow");
+				this.grid[jonsnowR][jonsnowC+1] = new block("empty");
 			
 		}
 			
 		};break;
 		case "R":{
 			if(jonsnowC<grid[0].length-1 && isAvailable(grid, jonsnowR, jonsnowC+1)) {
-				jonsnowC++;
-				grid[jonsnowR][jonsnowC] = new block("jonsnow");
-				grid[jonsnowR][jonsnowC-1] = new block("empty");
+				this.jonsnowC++;
+				this.grid[jonsnowR][jonsnowC] = new block("jonsnow");
+				this.grid[jonsnowR][jonsnowC-1] = new block("empty");
 			
 		}
 		};break;
 		}
-		return this;
 	}
 	
-	public void attack() {
+	public Map attack() {
 		if(this.jonswords >0) {
-			this.jonswords--;
+			boolean decreaseSwords = false;
 			for(int i=0; i < 4; i++) {
 				try {
 					switch(i) {
 					case 0:{
-						if(grid[jonsnowR][jonsnowC+1].whitewalker) ww--;
-						grid[jonsnowR][jonsnowC+1] = new block("empty");
+						if(grid[jonsnowR][jonsnowC+1].whitewalker) {
+							ww--;
+							grid[jonsnowR][jonsnowC+1] = new block("empty");
+							decreaseSwords = true;
+						}
 					}break;
 					case 1:{
-						if(grid[jonsnowR][jonsnowC-1].whitewalker) ww--;
-						grid[jonsnowR][jonsnowC-1] = new block("empty");
+						if(grid[jonsnowR][jonsnowC-1].whitewalker) {
+							ww--;
+							grid[jonsnowR][jonsnowC-1] = new block("empty");
+							decreaseSwords = true;
+						}
 					}break;
 					case 2:{
-						if(grid[jonsnowR+1][jonsnowC].whitewalker) ww--;
-						grid[jonsnowR+1][jonsnowC] = new block("empty");
+						if(grid[jonsnowR+1][jonsnowC].whitewalker) {
+							ww--;
+							grid[jonsnowR+1][jonsnowC] = new block("empty");
+							decreaseSwords = true;
+						}
 					}break;
 					case 3:{
-						if(grid[jonsnowR-1][jonsnowC].whitewalker) ww--;
-						grid[jonsnowR-1][jonsnowC] = new block("empty");
+						if(grid[jonsnowR-1][jonsnowC].whitewalker) {
+							ww--;
+							grid[jonsnowR-1][jonsnowC] = new block("empty");
+							decreaseSwords = true;
+						}
 					}break;
 
 					}
+					if(decreaseSwords)
+						this.jonswords--;
 				} catch(IndexOutOfBoundsException e) {}
 			}
 		}
+		return this;
 	}
 	
 	public void refill() {
 		if(((jonsnowR == dragonR-1 || jonsnowR == dragonR+1) && jonsnowC == dragonC) || ((jonsnowC == dragonC-1 || jonsnowC == dragonC+1) && jonsnowR == dragonR)) {
 			this.jonswords = this.maxswords;
 		}
+	}
+	
+	public static Map clone(final Map map) {
+		Map _map = new Map();
+		_map.rows = map.rows;
+		_map.columns = map.columns;
+		_map.jonsnowR = map.jonsnowR;
+		_map.jonsnowC = map.jonsnowC;
+		_map.dragonR = map.dragonR;
+		_map.dragonC = map.dragonC;
+		_map.jonswords = map.jonswords;
+		_map.maxswords = map.maxswords;
+		_map.cost = map.cost;
+		_map.ww = map.ww;
+		_map.grid = map.grid;
+		
+		return _map;
 	}
 	
 	//Function to determine if block is not empty nor undefined

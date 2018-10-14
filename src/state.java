@@ -1,19 +1,21 @@
 
 public class state {
-	public int whitewalkers;
-	public int daggers;
-	public int x;
-	public int y;
+	public Map map;
+//	public int whitewalkers;
+//	public int daggers;
+//	public int x;
+//	public int y;
 	
-	public state(int whitewalkers, int daggers, int x, int y) {
-		this.whitewalkers = whitewalkers;
-		this.daggers = daggers;
-		this.x = x;
-		this.y = y;
+	public state(Map map) {
+		this.map = map;
+//		this.whitewalkers = whitewalkers;
+//		this.daggers = daggers;
+//		this.x = x;
+//		this.y = y;
 	}
 	
 	public String toString() {
-		return "<"+this.whitewalkers+","+this.daggers+","+this.x+","+this.y+">";
+		return "<"+this.map.ww+","+this.map.jonswords+","+this.map.jonsnowC+","+this.map.jonsnowR+">";
 	}
 
 	@Override
@@ -28,6 +30,7 @@ public class state {
         
         state state = (state) o; 
         
-        return this.whitewalkers == state.whitewalkers && this.daggers == state.daggers && this.x == state.x && this.y == state.y; 
+        return this.map.ww == state.map.ww && this.map.jonswords == state.map.jonswords 
+        		&& this.map.jonsnowC == state.map.jonsnowC && this.map.jonsnowR == state.map.jonsnowR; 
     } 
 }
