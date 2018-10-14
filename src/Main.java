@@ -7,7 +7,7 @@ public class Main {
 	private static ArrayList<state> previousStates;
 	public static String strategy = "DFS";
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, CloneNotSupportedException {
 		Map map = new Map();
 		actions = action.populateActions();
 		previousStates = new ArrayList<state>();
@@ -41,12 +41,12 @@ public class Main {
 		map.refill();
 	}
 	
-	public static ArrayList<node> generateNodes(ArrayList<node> list, String strategy){
+	public static ArrayList<node> generateNodes(ArrayList<node> list, String strategy) throws CloneNotSupportedException{
 		if(list.isEmpty())
 			return null;
 		
 		int count = 0;
-		node node = list.get(0);
+		final node node = list.get(0);
 		list.remove(0);
 		System.out.println("///////////NEW NODE/////////////");
 		System.out.println(node);
@@ -56,7 +56,7 @@ public class Main {
 			switch(action.operator) {
 				case "F":{
 					System.out.println("OLD MAP WAS ::::");System.out.println(node.state.map);
-					Map map = Map.clone(node.state.map);
+					Map map = (Map)node.state.map.clone();
 					map.moveJonSnow("F");
 					System.out.println("NEW MAP IS ::::");System.out.println(map);
 					System.out.println("NEW OLD MAP THO IS :::::");System.out.println(node.state.map);
@@ -75,7 +75,7 @@ public class Main {
 				}
 					break;
 				case "B":{
-					Map map = Map.clone(node.state.map);
+					Map map = node.state.map;
 					move(map, "B");
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -87,7 +87,7 @@ public class Main {
 				}
 					break;
 				case "L":{
-					Map map = Map.clone(node.state.map);
+					Map map = node.state.map;
 					move(map, "L");
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -99,7 +99,7 @@ public class Main {
 				}
 					break;
 				case "R":{
-					Map map = Map.clone(node.state.map);
+					Map map = node.state.map;
 					move(map, "R");
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -111,7 +111,7 @@ public class Main {
 				}
 					break;
 				case "ATTACK":{
-					Map map = Map.clone(node.state.map);
+					Map map = node.state.map;
 					map = attack(node.state.map);
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
@@ -123,7 +123,7 @@ public class Main {
 				}
 					break;
 				case "REFILL":{
-					Map map = Map.clone(node.state.map);
+					Map map = node.state.map;
 					refill(map);
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {

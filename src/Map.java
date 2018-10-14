@@ -1,5 +1,5 @@
 
-public class Map {
+public class Map implements Cloneable{
 	public int rows, columns;
 	public int jonsnowR, jonsnowC;
 	public int dragonR, dragonC;
@@ -15,6 +15,20 @@ public class Map {
 		this.grid = new block[this.rows][this.columns];
 		this.cost= 0;
 		populateGrid();
+	}
+	
+	public Map(Map map) {
+		this.rows = map.rows;
+		this.columns = map.columns;
+		this.jonsnowR = map.jonsnowR;
+		this.jonsnowC = map.jonsnowC;
+		this.dragonR = map.dragonR;
+		this.dragonC = map.dragonC;
+		this.jonswords = map.jonswords;
+		this.maxswords = map.maxswords;
+		this.cost = map.cost;
+		this.ww = map.ww;
+		this.grid = map.grid;
 	}
 	
 	void populateGrid() {
@@ -182,21 +196,10 @@ public class Map {
 		}
 	}
 	
-	public static Map clone(final Map map) {
-		Map _map = new Map();
-		_map.rows = map.rows;
-		_map.columns = map.columns;
-		_map.jonsnowR = map.jonsnowR;
-		_map.jonsnowC = map.jonsnowC;
-		_map.dragonR = map.dragonR;
-		_map.dragonC = map.dragonC;
-		_map.jonswords = map.jonswords;
-		_map.maxswords = map.maxswords;
-		_map.cost = map.cost;
-		_map.ww = map.ww;
-		_map.grid = map.grid;
-		
-		return _map;
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		Map cloned = (Map)super.clone();
+		return cloned;
 	}
 	
 	//Function to determine if block is not empty nor undefined
