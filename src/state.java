@@ -1,17 +1,9 @@
 
 public class state {
 	public Map map;
-//	public int whitewalkers;
-//	public int daggers;
-//	public int x;
-//	public int y;
 	
 	public state(Map map) {
 		this.map = map;
-//		this.whitewalkers = whitewalkers;
-//		this.daggers = daggers;
-//		this.x = x;
-//		this.y = y;
 	}
 	
 	public String toString() {

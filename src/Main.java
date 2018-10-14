@@ -32,11 +32,6 @@ public class Main {
 		map.moveJonSnow(direction);
 	}
 	
-	//COST: 3
-	public static Map attack(Map map) {
-		return map.attack();
-	}
-	
 	//COST: 10
 	public static void refill(Map map) {
 		map.refill();
@@ -104,7 +99,7 @@ public class Main {
 					break;
 				case "ATTACK":{
 					Map map = (Map)clone(node.state.map);
-					map = attack(node.state.map);
+					map.attack();
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
@@ -128,9 +123,9 @@ public class Main {
 					break;
 				}
 		}
-		System.out.println("..............................................................");
 		System.out.println("POSSIBLE ACTIONS");
 		System.out.println(list);
+		System.out.println("..............................................................");
 		return generateNodes(list, strategy);
 	}
 	

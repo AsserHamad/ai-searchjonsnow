@@ -19,7 +19,7 @@ public class node {
 	}
 	
 	public String toString() {
-		return "\n<<<State: " + this.state + " \nID: " + this.id + "\nParent id: " + this.parent_id + "\nOperator: " + this.operator
-				+ "\nDepth: " + this.depth + "\nCost: " + this.cost+ " >>>\n";
+		return "\n<<<State: " + this.state + "\nOperator: " + this.operator +
+				"\nDepth: " + this.depth + "\nCost: " + this.cost+ " >>>\n";
 	}
 }

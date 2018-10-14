@@ -147,7 +147,7 @@ public class Map implements java.io.Serializable{
 		}
 	}
 	
-	public Map attack() {
+	public void attack() {
 		if(this.jonswords >0) {
 			boolean decreaseSwords = false;
 			for(int i=0; i < 4; i++) {
@@ -155,29 +155,29 @@ public class Map implements java.io.Serializable{
 					switch(i) {
 					case 0:{
 						if(grid[jonsnowR][jonsnowC+1].whitewalker) {
-							ww--;
-							grid[jonsnowR][jonsnowC+1] = new block("empty");
+							this.ww--;
+							this.grid[jonsnowR][jonsnowC+1] = new block("empty");
 							decreaseSwords = true;
 						}
 					}break;
 					case 1:{
 						if(grid[jonsnowR][jonsnowC-1].whitewalker) {
-							ww--;
-							grid[jonsnowR][jonsnowC-1] = new block("empty");
+							this.ww--;
+							this.grid[jonsnowR][jonsnowC-1] = new block("empty");
 							decreaseSwords = true;
 						}
 					}break;
 					case 2:{
 						if(grid[jonsnowR+1][jonsnowC].whitewalker) {
-							ww--;
-							grid[jonsnowR+1][jonsnowC] = new block("empty");
+							this.ww--;
+							this.grid[jonsnowR+1][jonsnowC] = new block("empty");
 							decreaseSwords = true;
 						}
 					}break;
 					case 3:{
 						if(grid[jonsnowR-1][jonsnowC].whitewalker) {
-							ww--;
-							grid[jonsnowR-1][jonsnowC] = new block("empty");
+							this.ww--;
+							this.grid[jonsnowR-1][jonsnowC] = new block("empty");
 							decreaseSwords = true;
 						}
 					}break;
@@ -188,7 +188,6 @@ public class Map implements java.io.Serializable{
 				} catch(IndexOutOfBoundsException e) {}
 			}
 		}
-		return this;
 	}
 	
 	public void refill() {
