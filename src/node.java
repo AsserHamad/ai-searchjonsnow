@@ -1,18 +1,18 @@
 
-public class node {
+public class node implements Comparable{
 	public state state;
 	public int id;
-	public int parent_id;
+	public node parent;
 	public String operator;
 	public int depth;
 	public int cost;
 	
-	public node(state state, String operator, int depth, int cost, int parent_id) {
+	public node(state state, String operator, int depth, int cost, node parent) {
 		//Generates random id for this node to be used to reference it from its children
 		this.id = (int)(Math.random()*1000000);
 		
 		this.state = state;
-		this.parent_id = parent_id;
+		this.parent = parent;
 		this.operator = operator;
 		this.depth = depth;
 		this.cost = cost;
@@ -21,5 +21,13 @@ public class node {
 	public String toString() {
 		return "\n<<<State: " + this.state + "\nOperator: " + this.operator +
 				"\nDepth: " + this.depth + "\nCost: " + this.cost+ " >>>\n";
+	}
+	
+
+	@Override
+	public int compareTo(Object node) {
+        int compareage=((node)node).cost;
+        /* For Ascending order*/
+        return this.cost-compareage;
 	}
 }

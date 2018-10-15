@@ -4,22 +4,25 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Main {
 	
 	public static action[] actions;
 	private static ArrayList<state> previousStates;
 	public static String strategy = "DFS";
+	public static ArrayList<node> goalnodes;
 	
 	public static void main(String[] args) throws IOException, CloneNotSupportedException, ClassNotFoundException {
 		Map map = new Map();
 		actions = action.populateActions();
 		previousStates = new ArrayList<state>();
+		goalnodes = new ArrayList<node>();
 		state initialstate = new state(map);
 		
 		//As to include the root in the states
 		previousStates.add(initialstate);
-		node root = new node(initialstate, "", 0, 0, -1);
+		node root = new node(initialstate, "", 0, 0, null);
 
 		ArrayList<node> list= new ArrayList<node>();
 		list.add(root);
@@ -37,11 +40,25 @@ public class Main {
 		map.refill();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static ArrayList<node> generateNodes(ArrayList<node> list, String strategy) throws CloneNotSupportedException, ClassNotFoundException, IOException{
 		if(list.isEmpty())
 			return null;
 		
 		final node node = list.get(0);
+		if(node.state.map.ww == 0) {
+			System.out.println("You won!!!");
+			System.out.println("****************************\n****************************");
+			System.out.println(node.state.map);
+			System.out.println("COST:   ");System.out.println(node.cost);
+			System.out.println("****************************\n****************************");
+			
+			goalnodes.add(node);
+			list.remove(0);
+			Collections.sort(goalnodes);
+			return generateNodes(list, strategy);
+			
+		}
 		System.out.println(node.state.map);
 		list.remove(0);
 		int count = 0;
@@ -55,7 +72,7 @@ public class Main {
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "F", node.depth+1, node.cost + 1, node.id);
+						node _node = new node(_state, "F", node.depth+1, node.cost + 1, node);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -67,7 +84,7 @@ public class Main {
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "B", node.depth+1, node.cost + 1, node.id);
+						node _node = new node(_state, "B", node.depth+1, node.cost + 1, node);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -79,7 +96,7 @@ public class Main {
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "L", node.depth+1, node.cost + 1, node.id);
+						node _node = new node(_state, "L", node.depth+1, node.cost + 1, node);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -91,7 +108,7 @@ public class Main {
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "R", node.depth+1, node.cost + 1, node.id);
+						node _node = new node(_state, "R", node.depth+1, node.cost + 1, node);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -103,7 +120,7 @@ public class Main {
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "ATTACK", node.depth+1, node.cost + 3, node.id);
+						node _node = new node(_state, "ATTACK", node.depth+1, node.cost + 3, node);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -115,7 +132,7 @@ public class Main {
 					state _state = new state(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "REFILL", node.depth+1, node.cost + 10, node.id);
+						node _node = new node(_state, "REFILL", node.depth+1, node.cost + 10, node);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -130,12 +147,21 @@ public class Main {
 	}
 	
 	//Adding the nodes to the list (tree) in the appropriate order
+	@SuppressWarnings("unchecked")
 	public static ArrayList<node> addToList(String strategy, int count, ArrayList<node> list, node node){
 		switch(strategy) {
 			case "DFS":{
 				list.add(count, node);
 			}
 			break;
+			case "BFS":{
+				list.add(node);
+			}
+			break;
+			case "UC":{
+				list.add(node);
+				Collections.sort(list);
+			}
 		}
 		return list;
 	}
