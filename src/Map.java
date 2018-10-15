@@ -11,8 +11,8 @@ public class Map implements java.io.Serializable{
 	public block[][] grid;
 	
 	public Map() {
-		this.rows = (int)(3 + (Math.random()*0));
-		this.columns = (int)(3 + (Math.random()*0));
+		this.rows = (int)(5 + (Math.random()*0));
+		this.columns = (int)(13 + (Math.random()*0));
 		this.grid = new block[this.rows][this.columns];
 		this.cost= 0;
 		populateGrid();

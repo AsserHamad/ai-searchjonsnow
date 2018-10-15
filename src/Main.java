@@ -10,9 +10,10 @@ public class Main {
 	
 	public static action[] actions;
 	private static ArrayList<state> previousStates;
-	public static String strategy = "DFS";
+	public static String strategy = "BFS";
 	public static ArrayList<node> goalnodes;
 	
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException, CloneNotSupportedException, ClassNotFoundException {
 		Map map = new Map();
 		actions = action.populateActions();
@@ -26,10 +27,21 @@ public class Main {
 
 		ArrayList<node> list= new ArrayList<node>();
 		list.add(root);
+		System.out.println(root.state.map);
 		System.out.println(generateNodes(list, strategy));
+		Collections.sort(goalnodes);
+		if(!goalnodes.isEmpty())
+			printHeritage(goalnodes.get(0));
 		
 	}
 	
+	private static void printHeritage(node node) {
+		while(node != null) {
+			System.out.print(node.operator+" > ");
+			node = node.parent;
+		}
+	}
+
 	//COST: 1
 	public static void move(Map map, String direction) {
 		map.moveJonSnow(direction);
@@ -47,11 +59,11 @@ public class Main {
 		
 		final node node = list.get(0);
 		if(node.state.map.ww == 0) {
-			System.out.println("You won!!!");
-			System.out.println("****************************\n****************************");
-			System.out.println(node.state.map);
-			System.out.println("COST:   ");System.out.println(node.cost);
-			System.out.println("****************************\n****************************");
+//			System.out.println("You won!!!");
+//			System.out.println("****************************\n****************************");
+//			System.out.println(node.state.map);
+//			System.out.println("COST:   ");System.out.println(node.cost);
+//			System.out.println("****************************\n****************************");
 			
 			goalnodes.add(node);
 			list.remove(0);
@@ -59,11 +71,11 @@ public class Main {
 			return generateNodes(list, strategy);
 			
 		}
-		System.out.println(node.state.map);
+//		System.out.println(node.state.map);
 		list.remove(0);
 		int count = 0;
-		System.out.println("///////////NEW NODE/////////////");
-		System.out.println(node);
+//		System.out.println("///////////NEW NODE/////////////");
+//		System.out.println(node);
 		for(action action: actions) {
 			switch(action.operator) {
 				case "F":{
@@ -140,9 +152,9 @@ public class Main {
 					break;
 				}
 		}
-		System.out.println("POSSIBLE ACTIONS");
-		System.out.println(list);
-		System.out.println("..............................................................");
+//		System.out.println("POSSIBLE ACTIONS");
+//		System.out.println(list);
+//		System.out.println("..............................................................");
 		return generateNodes(list, strategy);
 	}
 	

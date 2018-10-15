@@ -22,7 +22,7 @@ public class state {
         
         state state = (state) o; 
         
-        return this.map.ww == state.map.ww && this.map.jonswords == state.map.jonswords 
+        return this.map.ww == state.map.ww && this.map.jonswords == state.map.jonswords
         		&& this.map.jonsnowC == state.map.jonsnowC && this.map.jonsnowR == state.map.jonsnowR; 
     } 
 }
