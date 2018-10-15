@@ -10,7 +10,7 @@ public class Main {
 	
 	public static action[] actions;
 	private static ArrayList<state> previousStates;
-	public static String strategy = "BFS";
+	public static String strategy = "DFS";
 	public static ArrayList<node> goalnodes;
 	
 	@SuppressWarnings("unchecked")
@@ -28,17 +28,23 @@ public class Main {
 		ArrayList<node> list= new ArrayList<node>();
 		list.add(root);
 		System.out.println(root.state.map);
+		System.out.println("SWORDS: " + root.state.map.maxswords);
 		System.out.println(generateNodes(list, strategy));
 		Collections.sort(goalnodes);
 		if(!goalnodes.isEmpty())
-			printHeritage(goalnodes.get(0));
+			printHeritage(goalnodes);
 		
 	}
 	
-	private static void printHeritage(node node) {
-		while(node != null) {
-			System.out.print(node.operator+" > ");
-			node = node.parent;
+	private static void printHeritage(ArrayList<node> nodes) {
+		for (int i = 0; i < nodes.size(); i++) {
+			node node = nodes.get(i);
+			System.out.println("COST: "+node.cost);
+			while(node != null) {
+				System.out.print(node.operator+" > ");
+				node = node.parent;
+			}
+			System.out.println();
 		}
 	}
 
@@ -68,7 +74,10 @@ public class Main {
 			goalnodes.add(node);
 			list.remove(0);
 			Collections.sort(goalnodes);
-			return generateNodes(list, strategy);
+			return null;
+			
+			//Uncomment this for optimality
+//			return generateNodes(list, strategy);
 			
 		}
 //		System.out.println(node.state.map);
