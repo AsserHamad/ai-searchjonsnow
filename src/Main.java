@@ -10,7 +10,7 @@ public class Main {
 	
 	public static action[] actions;
 	private static ArrayList<state> previousStates;
-	public static String strategy = "DFS";
+	public static String strategy = "UC";
 	public static ArrayList<node> goalnodes;
 	
 	@SuppressWarnings("unchecked")
@@ -40,7 +40,7 @@ public class Main {
 		for (int i = 0; i < nodes.size(); i++) {
 			node node = nodes.get(i);
 			System.out.println("COST: "+node.cost);
-			while(node != null) {
+			while(node != null && !node.operator.equals("")) {
 				System.out.print(node.operator+" > ");
 				node = node.parent;
 			}
@@ -74,10 +74,10 @@ public class Main {
 			goalnodes.add(node);
 			list.remove(0);
 			Collections.sort(goalnodes);
-			return null;
+//			return null;
 			
 			//Uncomment this for optimality
-//			return generateNodes(list, strategy);
+			return generateNodes(list, strategy);
 			
 		}
 //		System.out.println(node.state.map);
@@ -182,6 +182,19 @@ public class Main {
 			case "UC":{
 				list.add(node);
 				Collections.sort(list);
+			}
+			break;
+			case "ID":{
+				node _node = node;
+				while(!list.contains(_node.parent) && _node != null) {
+					list.add(_node.parent);
+					_node = _node.parent;
+				}
+				list.add(list.indexOf(node.parent) + count ,node);
+			}
+			break;
+			case "GREEDY":{
+				
 			}
 		}
 		return list;

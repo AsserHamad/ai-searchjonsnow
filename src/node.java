@@ -30,4 +30,20 @@ public class node implements Comparable{
         /* For Ascending order*/
         return this.cost-compareage;
 	}
+	
+
+	@Override
+    public boolean equals(Object o) {
+        if (o == this) { 
+            return true; 
+        } 
+  
+        if (!(o instanceof node)) { 
+            return false; 
+        } 
+        
+        node node = (node) o; 
+        
+        return this.state.equals(node.state);
+        } 
 }
