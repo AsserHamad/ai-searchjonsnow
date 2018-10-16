@@ -2,7 +2,7 @@ package problems;
 import java.util.ArrayList;
 
 import actions.action;
-import states.state;
+import states.*;
 import nodes.node;
 
 public abstract class problem {
