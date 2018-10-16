@@ -1,3 +1,6 @@
+package nodes;
+import states.state;
+import nodes.node;
 
 public class node implements Comparable{
 	public state state;

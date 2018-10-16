@@ -1,3 +1,5 @@
+package states;
+import grids.Map;
 
 public class state {
 	public Map map;
