@@ -203,6 +203,29 @@ public class Map implements java.io.Serializable {
 			this.jonswords = this.maxswords;
 		}
 	}
+	
+	public int getWWInBlock(int range) {
+		int count = 0;
+		for (int i = 0; i < range; i++) {
+			try {
+				if(grid[jonsnowR][jonsnowC+i].whitewalker)
+					count++;
+				if(grid[jonsnowR][jonsnowC-i].whitewalker)
+					count++;
+				if(grid[jonsnowR+i][jonsnowC].whitewalker)
+					count++;
+				if(grid[jonsnowR-i][jonsnowC].whitewalker)
+					count++;
+				
+			} catch(Exception e) {}
+		}
+		
+		return count;
+	}
+	
+	public int getDistToDS(){ 
+		return Math.abs(this.dragonC-this.jonsnowC) + Math.abs(this.dragonR - this.jonsnowR);
+	}
 
 	// Function to determine if block is not empty nor undefined
 	public static boolean isAvailable(block[][] grid, int row, int column) {

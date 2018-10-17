@@ -4,7 +4,6 @@ import nodes.node;
 
 public class node implements Comparable<Object>{
 	public state state;
-	public int id;
 	public node parent;
 	public String operator;
 	public int depth;
@@ -12,9 +11,6 @@ public class node implements Comparable<Object>{
 	public int heuristic;
 	
 	public node(state state, String operator, int depth, int cost, node parent) {
-		//Generates random id for this node to be used to reference it from its children
-		this.id = (int)(Math.random()*1000000);
-		
 		this.state = state;
 		this.parent = parent;
 		this.operator = operator;
@@ -25,9 +21,6 @@ public class node implements Comparable<Object>{
 	
 
 	public node(state state, String operator, int depth, int cost, int heuristic, node parent) {
-		//Generates random id for this node to be used to reference it from its children
-		this.id = (int)(Math.random()*1000000);
-		
 		this.state = state;
 		this.parent = parent;
 		this.operator = operator;
@@ -37,8 +30,12 @@ public class node implements Comparable<Object>{
 	}
 	
 	public String toString() {
-		return "\n<<<State: " + this.state + "\nOperator: " + this.operator +
-				"\nDepth: " + this.depth + "\nCost: " + this.cost+ " >>>\n";
+		return "\n<<<State: " + this.state + 
+				"\nOperator: " + this.operator +
+				"\nDepth: " + this.depth + 
+				"\nCost: " + this.cost + 
+				"\nHeuristic: " + this.heuristic+ 
+				"\n>>>\n";
 	}
 	
 

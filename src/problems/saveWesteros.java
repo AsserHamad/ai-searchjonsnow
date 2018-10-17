@@ -39,8 +39,8 @@ public class saveWesteros extends problem {
 		ArrayList<node> list= new ArrayList<node>();
 		list.add(root);
 		System.out.println(((SWstate)root.state).map);
-		System.out.println(generateNodes(list, strategy, visualize));
-		Collections.sort(goalnodes);
+		generateNodes(list, strategy, visualize, 1);
+		System.out.println("SWORDS: " + ((SWstate)root.state).map.maxswords);
 		if(!goalnodes.isEmpty()) {
 			printHeritage(goalnodes);
 			return goalnodes.get(0);
@@ -54,10 +54,13 @@ public class saveWesteros extends problem {
 		for (int i = 0; i < nodes.size(); i++) {
 			node node = nodes.get(i);
 			System.out.println("COST: "+pathCost(node));
+			ArrayList<String> n = new ArrayList<String>();
 			while(node != null && !node.operator.equals("")) {
-				System.out.print(node.operator+" > ");
+				n.add(node.operator);
 				node = node.parent;
 			}
+			Collections.reverse(n);
+			System.out.print(n);
 			System.out.println();
 		}
 	}
@@ -72,11 +75,11 @@ public class saveWesteros extends problem {
 		map.refill();
 	}
 	
-	public ArrayList<node> generateNodes(ArrayList<node> list, String strategy, boolean visualize) throws CloneNotSupportedException, ClassNotFoundException, IOException{
+	public ArrayList<node> generateNodes(ArrayList<node> list, String strategy, boolean visualize, int heuristic) throws CloneNotSupportedException, ClassNotFoundException, IOException{
 		if(list.isEmpty())
 			return null;
 		
-		final node node = list.get(0);
+		node node = list.get(0);
 		if(goalTest(node)) {
 			print("You won!!!", visualize);
 			print("****************************\n****************************", visualize);
@@ -98,6 +101,9 @@ public class saveWesteros extends problem {
 		int count = 0;
 		print("///////////NEW NODE/////////////", visualize);
 		print(node.toString(), visualize);
+		
+		if(node.operator.equals("REFILL"))
+			System.out.println("Refilling cost: 14, Heuristic : "+node.heuristic);
 		for(action action: this.actions) {
 			switch(action.operator) {
 				case "F":{
@@ -108,6 +114,7 @@ public class saveWesteros extends problem {
 						previousStates.add(_state);
 						node _node = new node(_state, "F", node.depth+1, pathCost(node) + 1, node);
 						/* Add Heuristic */
+						_node.heuristic = calculateHeuristic(_node, heuristic);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -121,6 +128,7 @@ public class saveWesteros extends problem {
 						previousStates.add(_state);
 						node _node = new node(_state, "B", node.depth+1, pathCost(node) + 1, node);
 						/* Add Heuristic */
+						_node.heuristic = calculateHeuristic(_node, heuristic);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -134,6 +142,7 @@ public class saveWesteros extends problem {
 						previousStates.add(_state);
 						node _node = new node(_state, "L", node.depth+1, pathCost(node) + 1, node);
 						/* Add Heuristic */
+						_node.heuristic = calculateHeuristic(_node, heuristic);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -147,6 +156,7 @@ public class saveWesteros extends problem {
 						previousStates.add(_state);
 						node _node = new node(_state, "R", node.depth+1, pathCost(node) + 1, node);
 						/* Add Heuristic */
+						_node.heuristic = calculateHeuristic(_node, heuristic);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -158,8 +168,9 @@ public class saveWesteros extends problem {
 					SWstate _state = new SWstate(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "ATTACK", node.depth+1, pathCost(node) + 3, node);
+						node _node = new node(_state, "ATTACK", node.depth+1, pathCost(node) + 5, node);
 						/* Add Heuristic */
+						_node.heuristic = calculateHeuristic(_node, heuristic);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -171,8 +182,9 @@ public class saveWesteros extends problem {
 					SWstate _state = new SWstate(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "REFILL", node.depth+1, pathCost(node) + 10, node);
+						node _node = new node(_state, "REFILL", node.depth+1, pathCost(node) + 20, node);
 						/* Add Heuristic */
+						_node.heuristic = calculateHeuristic(_node, heuristic);
 						list = addToList(strategy, count, list, _node);
 						count++;
 					}
@@ -183,9 +195,22 @@ public class saveWesteros extends problem {
 		print("POSSIBLE ACTIONS", visualize);
 		print(list.toString(), visualize);
 		print("..............................................................", visualize);
-		return generateNodes(list, strategy, visualize);
+		return generateNodes(list, strategy, visualize, heuristic);
 	}
 	
+	public int calculateHeuristic(node node, int method) {
+		Map map = ((SWstate)node.state).map;
+		int h = 0;
+		if(method == 0) {
+			h = (map.ww == 0) ? 0 : 
+				(int)(((1/(1 + map.getWWInBlock(1))*10 + (1 +map.maxswords-map.jonswords))));
+		} else {
+			h = (map.ww == 0) ? 0 : 
+				1 + (int)(map.jonswords + map.getDistToDS());
+		}
+		return h;
+	}
+
 	//Adding the nodes to the list (tree) in the appropriate order
 	public ArrayList<node> addToList(String strategy, int count, ArrayList<node> list, node node){
 		switch(strategy) {
@@ -251,7 +276,7 @@ public class saveWesteros extends problem {
 	}
 	
 	public static void main(String[] args) throws ClassNotFoundException, CloneNotSupportedException, IOException {
-		new saveWesteros("UC", false);
+		new saveWesteros("A*", false);
 	}
 
 }
