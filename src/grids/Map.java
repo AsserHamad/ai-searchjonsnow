@@ -7,7 +7,6 @@ public class Map implements java.io.Serializable {
 	public int dragonR, dragonC;
 	public int jonswords;
 	public int maxswords;
-	public int cost;
 	public int ww;
 	public block[][] grid;
 
@@ -15,7 +14,6 @@ public class Map implements java.io.Serializable {
 		this.rows = (int) (4 + (Math.random() * 0));
 		this.columns = (int) (4 + (Math.random() * 0));
 		this.grid = new block[this.rows][this.columns];
-		this.cost = 0;
 		populateGrid();
 	}
 
@@ -28,7 +26,6 @@ public class Map implements java.io.Serializable {
 		this.dragonC = map.dragonC;
 		this.jonswords = map.jonswords;
 		this.maxswords = map.maxswords;
-		this.cost = map.cost;
 		this.ww = map.ww;
 		this.grid = map.grid;
 	}

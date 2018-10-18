@@ -15,8 +15,8 @@ import states.*;
 
 public class saveWesteros extends problem {
 	private static ArrayList<SWstate> previousStates;
-	public static ArrayList<node> goalnodes;
-
+	
+	// Constructor
 	public saveWesteros(String strategy, boolean visualize) throws ClassNotFoundException, CloneNotSupportedException, IOException {
 		search(genGrid(), strategy, visualize);	
 	}
@@ -29,7 +29,6 @@ public class saveWesteros extends problem {
 	public node search(Map map, String strategy, boolean visualize) throws ClassNotFoundException, CloneNotSupportedException, IOException {
 		this.actions = action.populateActions();
 		previousStates = new ArrayList<SWstate>();
-		goalnodes = new ArrayList<node>();
 		SWstate initialstate = new SWstate(map);
 		
 		//As to include the root in the states
@@ -39,43 +38,37 @@ public class saveWesteros extends problem {
 		ArrayList<node> list= new ArrayList<node>();
 		list.add(root);
 		System.out.println(((SWstate)root.state).map);
-		generateNodes(list, strategy, visualize, 1);
+		node goal = generateNodes(list, strategy, visualize, 1);
 		System.out.println("SWORDS: " + ((SWstate)root.state).map.maxswords);
-		if(!goalnodes.isEmpty()) {
-			printHeritage(goalnodes);
-			return goalnodes.get(0);
+		if(goal != null) {
+			printHeritage(goal);
+			return goal;
 		} else {
+			System.out.println("FAIL");
 			return null;
 		}
 		
 	}
 	
-	private void printHeritage(ArrayList<node> nodes) {
-		for (int i = 0; i < nodes.size(); i++) {
-			node node = nodes.get(i);
-			System.out.println("COST: "+pathCost(node));
+	/* Function to print all the actions leading to the goal
+	 */
+	private void printHeritage(node goal) {
+			System.out.println("COST: "+pathCost(goal));
 			ArrayList<String> n = new ArrayList<String>();
-			while(node != null && !node.operator.equals("")) {
-				n.add(node.operator);
-				node = node.parent;
+			while(goal != null && !goal.operator.equals("")) {
+				n.add(goal.operator);
+				goal = goal.parent;
 			}
 			Collections.reverse(n);
 			System.out.print(n);
 			System.out.println();
-		}
 	}
 
-	//COST: 1
-	public static void move(Map map, String direction) {
-		map.moveJonSnow(direction);
-	}
-	
-	//COST: 10
-	public static void refill(Map map) {
-		map.refill();
-	}
-	
-	public ArrayList<node> generateNodes(ArrayList<node> list, String strategy, boolean visualize, int heuristic) throws CloneNotSupportedException, ClassNotFoundException, IOException{
+	/* The main bread and butter of this class, it loops on each node
+	 * in the list and generates new nodes depending on the possible
+	 * actions and the previous states.
+	 */
+	public node generateNodes(ArrayList<node> list, String strategy, boolean visualize, int heuristic) throws CloneNotSupportedException, ClassNotFoundException, IOException{
 		if(list.isEmpty())
 			return null;
 		
@@ -87,13 +80,7 @@ public class saveWesteros extends problem {
 			print("COST:   ", visualize);print(node.cost+"", visualize);
 			print("****************************\n****************************", visualize);
 			
-			goalnodes.add(node);
-			list.remove(0);
-			Collections.sort(goalnodes);
-			return null;
-			
-			//Uncomment this for optimality
-			//return generateNodes(list, strategy);
+			return node;
 			
 		}
 		print(((SWstate)node.state).map.toString(), visualize);
@@ -102,8 +89,6 @@ public class saveWesteros extends problem {
 		print("///////////NEW NODE/////////////", visualize);
 		print(node.toString(), visualize);
 		
-		if(node.operator.equals("REFILL"))
-			System.out.println("Refilling cost: 14, Heuristic : "+node.heuristic);
 		for(action action: this.actions) {
 			switch(action.operator) {
 				case "F":{
@@ -122,7 +107,7 @@ public class saveWesteros extends problem {
 					break;
 				case "B":{
 					Map map = (Map)clone(((SWstate)node.state).map);
-					move(map, "B");
+					map.moveJonSnow("B");
 					SWstate _state = new SWstate(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
@@ -136,7 +121,7 @@ public class saveWesteros extends problem {
 					break;
 				case "L":{
 					Map map = (Map)clone(((SWstate)node.state).map);
-					move(map, "L");
+					map.moveJonSnow("L");
 					SWstate _state = new SWstate(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
@@ -150,7 +135,7 @@ public class saveWesteros extends problem {
 					break;
 				case "R":{
 					Map map = (Map)clone(((SWstate)node.state).map);
-					move(map, "R");
+					map.moveJonSnow("R");
 					SWstate _state = new SWstate(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
@@ -178,11 +163,11 @@ public class saveWesteros extends problem {
 					break;
 				case "REFILL":{
 					Map map = (Map)clone(((SWstate)node.state).map);
-					refill(map);
+					map.refill();
 					SWstate _state = new SWstate(map);
 					if(!previousStates.contains(_state)) {
 						previousStates.add(_state);
-						node _node = new node(_state, "REFILL", node.depth+1, pathCost(node) + 20, node);
+						node _node = new node(_state, "REFILL", node.depth+1, pathCost(node) + 15, node);
 						/* Add Heuristic */
 						_node.heuristic = calculateHeuristic(_node, heuristic);
 						list = addToList(strategy, count, list, _node);
@@ -198,6 +183,10 @@ public class saveWesteros extends problem {
 		return generateNodes(list, strategy, visualize, heuristic);
 	}
 	
+	/* Function to calculate the heuristic of a node, the method
+	 * int is there to check which type of heuristic function
+	 * to use
+	 */
 	public int calculateHeuristic(node node, int method) {
 		Map map = ((SWstate)node.state).map;
 		int h = 0;
@@ -211,7 +200,9 @@ public class saveWesteros extends problem {
 		return h;
 	}
 
-	//Adding the nodes to the list (tree) in the appropriate order
+	/* Adding the nodes to the list (tree) in the appropriate order
+	 * using the strategy entered
+	 */
 	public ArrayList<node> addToList(String strategy, int count, ArrayList<node> list, node node){
 		switch(strategy) {
 			case "DFS":{
@@ -223,6 +214,7 @@ public class saveWesteros extends problem {
 			}
 			break;
 			case "UC":{
+				node.heuristic = 0;
 				list.add(node);
 				Collections.sort(list);
 			}
@@ -249,7 +241,8 @@ public class saveWesteros extends problem {
 		return list;
 	}
 	
-
+	/* Cloning using serialization of the map
+	 */
 	public Object clone(Map obj) throws IOException, ClassNotFoundException {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -260,11 +253,13 @@ public class saveWesteros extends problem {
 			return ois.readObject();
 		}
 
+	// Test a node to check if it's a goal node or not
 	@Override
 	public boolean goalTest(node node) {
 		return ((SWstate)node.state).map.ww == 0;
 	}
 
+	// Calculate the cost of the path so far
 	@Override
 	public int pathCost(node node) {
 		return node.cost;
