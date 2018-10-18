@@ -15,10 +15,17 @@ import states.*;
 
 public class saveWesteros extends problem {
 	private static ArrayList<SWstate> previousStates;
+	private int nodeCount;
 	
 	// Constructor
 	public saveWesteros(String strategy, boolean visualize) throws ClassNotFoundException, CloneNotSupportedException, IOException {
-		search(genGrid(), strategy, visualize);	
+		Map map = genGrid();
+		search(map, "DF", visualize);
+		search(map, "BF", visualize);
+		search(map, "ID", visualize);
+		search(map, "UC", visualize);
+		search(map, "GREEDY", visualize);
+		search(map, "A*", visualize);
 	}
 	
 	//Generates an n*m grid
@@ -28,6 +35,7 @@ public class saveWesteros extends problem {
 	
 	public node search(Map map, String strategy, boolean visualize) throws ClassNotFoundException, CloneNotSupportedException, IOException {
 		this.actions = action.populateActions();
+		nodeCount = 0;
 		previousStates = new ArrayList<SWstate>();
 		SWstate initialstate = new SWstate(map);
 		
@@ -37,14 +45,16 @@ public class saveWesteros extends problem {
 
 		ArrayList<node> list= new ArrayList<node>();
 		list.add(root);
+		System.out.println("STRATEGY: "+strategy);
 		System.out.println(((SWstate)root.state).map);
 		node goal = generateNodes(list, strategy, visualize, 1);
-		System.out.println("SWORDS: " + ((SWstate)root.state).map.maxswords);
+		System.out.println("SWORDS:::" + ((SWstate)root.state).map.maxswords);
 		if(goal != null) {
+			System.out.println("NODES:::" + nodeCount);
 			printHeritage(goal);
 			return goal;
 		} else {
-			System.out.println("FAIL");
+			System.out.println("---FAIL---");
 			return null;
 		}
 		
@@ -72,6 +82,7 @@ public class saveWesteros extends problem {
 		if(list.isEmpty())
 			return null;
 		
+		nodeCount++;
 		node node = list.get(0);
 		if(goalTest(node)) {
 			print("You won!!!", visualize);
@@ -205,11 +216,11 @@ public class saveWesteros extends problem {
 	 */
 	public ArrayList<node> addToList(String strategy, int count, ArrayList<node> list, node node){
 		switch(strategy) {
-			case "DFS":{
+			case "DF":{
 				list.add(count, node);
 			}
 			break;
-			case "BFS":{
+			case "BF":{
 				list.add(node);
 			}
 			break;
@@ -221,11 +232,15 @@ public class saveWesteros extends problem {
 			break;
 			case "ID":{
 				node _node = node;
-				while(!list.contains(_node.parent) && _node != null) {
+				while(_node.parent != null && !list.contains(_node.parent) ) {
 					list.add(_node.parent);
 					_node = _node.parent;
 				}
-				list.add(list.indexOf(node.parent) + count ,node);
+				try {					
+					list.add(list.indexOf(node.parent) + count ,node);
+				} catch(NullPointerException e) {
+					list.add(0, node);
+				}
 			}
 			break;
 			case "GREEDY":{
@@ -270,8 +285,9 @@ public class saveWesteros extends problem {
 			System.out.println(text);
 	}
 	
+	
 	public static void main(String[] args) throws ClassNotFoundException, CloneNotSupportedException, IOException {
-		new saveWesteros("A*", false);
+		new saveWesteros("UC", false);
 	}
 
 }
