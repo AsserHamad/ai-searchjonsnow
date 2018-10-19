@@ -201,6 +201,7 @@ public class Map implements java.io.Serializable {
 		}
 	}
 	
+	//Get the number of white walkers within range of x blocks
 	public int getWWInBlock(int range) {
 		int count = 0;
 		for (int i = 0; i < range; i++) {
@@ -220,7 +221,8 @@ public class Map implements java.io.Serializable {
 		return count;
 	}
 	
-	public int getDistToDS(){ 
+	//Get the euclidean distance to the dragonstone
+	public int getDistToDS(){
 		return Math.abs(this.dragonC-this.jonsnowC) + Math.abs(this.dragonR - this.jonsnowR);
 	}
 

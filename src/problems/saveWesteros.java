@@ -20,12 +20,7 @@ public class saveWesteros extends problem {
 	// Constructor
 	public saveWesteros(String strategy, boolean visualize) throws ClassNotFoundException, CloneNotSupportedException, IOException {
 		Map map = genGrid();
-		search(map, "DF", visualize);
-		search(map, "BF", visualize);
-		search(map, "ID", visualize);
-		search(map, "UC", visualize);
-		search(map, "GREEDY", visualize);
-		search(map, "A*", visualize);
+		search(map, strategy, visualize);
 	}
 	
 	//Generates an n*m grid
@@ -206,7 +201,7 @@ public class saveWesteros extends problem {
 				(int)(((1/(1 + map.getWWInBlock(1))*10 + (1 +map.maxswords-map.jonswords))));
 		} else {
 			h = (map.ww == 0) ? 0 : 
-				1 + (int)(map.jonswords + map.getDistToDS());
+				1 + (int)((map.jonswords + map.getDistToDS())/map.ww)*100;
 		}
 		return h;
 	}
